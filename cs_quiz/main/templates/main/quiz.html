@@ -1,0 +1,8 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<h1>Quiz</h1>
+{% for q in quizes %}
+<li>{{ q.quiz_name }}</li>
+{% endfor %}
+{% endblock %}
