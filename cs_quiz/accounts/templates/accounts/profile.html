@@ -2,8 +2,10 @@
 
 {% block content %}
 <h1>Profile</h1>
-<p>{{ request }}</p>
 {% for i in assigned_quizes %}
 <p>{{ i.quiz_name }}</p> 
+{% if user.is_superuser %}
+<p>I'm a superuser</p> 
+{% endif %}
 {% endfor %}
 {% endblock %}

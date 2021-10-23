@@ -5,11 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
 from .forms import SignUpForm
-from main.models import AssignedQuiz
-
-
-# def login(request):
-#     return render(request, "accounts/login")
 
 
 # If we were to just use usercreationform as a function view
@@ -25,7 +20,7 @@ def signup_view(request):
             return redirect("home")
     else:
         # If its a get request we get our form
-        form = SignUpForm()
+        form = UserCreationForm()
     # We reutn a rendered bit fo html
     return render(request, "accounts/signup.html", {"form": form})
 
@@ -49,7 +44,5 @@ def logout_view(request):
 
 @login_required
 def profile_view(request) -> HttpResponse:
-    context = {
-        "assigned_quizes": list(AssignedQuiz.objects.filter(user=request.user))
-    }
+    context = {"assigned_quizes": [1, 2]}
     return render(request, "accounts/profile.html", context)

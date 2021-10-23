@@ -130,9 +130,6 @@ STATIC_URL = "/static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Where you get redirected after login
-LOGIN_REDIRECT_URL = "/"
-
 # Necessary for tailwind
 TAILWIND_APP_NAME = "theme"
 INTERNAL_IPS = [
