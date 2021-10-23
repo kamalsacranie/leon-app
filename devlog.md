@@ -16,3 +16,8 @@
 
 - Created a custom form inheriting from the main django user form
 - Created the login, logut and signup views
+
+## todo
+
+- create custom user model with name and surname
+- Fix form presentation using crispy. Perhaps iterate over

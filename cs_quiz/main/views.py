@@ -25,12 +25,16 @@ def create_quiz_view(request):
         quiz_form = QuizForm(request.POST)
         quiz_questions_form = QuizQuestionsForm(request.POST)
         if quiz_form.is_valid() and quiz_questions_form.is_valid():
+            # This just a djando quirk
             quiz = quiz_form.save(commit=False)
+            # Fill in our invisible fields with the necessary data
             quiz.set_by = User.objects.get(username=request.user)
+            # Saving commits this to our database
             quiz.save()
+            # do the same false commit so we can edit it
             questions = quiz_questions_form.save(commit=False)
+            # We assign the quiz name as the FK
             questions.quiz = quiz
-            # Sync with the databse to set our quiz FK
             quiz_questions_form.save()
             return redirect("home")
     else:
