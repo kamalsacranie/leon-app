@@ -1,4 +1,4 @@
-from main.forms import QuizForm
+from main.forms import QuizQuestionsForm, QuizForm
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import user_passes_test
@@ -21,12 +21,19 @@ def quiz_view(request) -> HttpResponse:
 @user_passes_test(lambda u: u.is_superuser)
 def create_quiz_view(request):
     if request.method == "POST":
-        form = QuizForm(request.POST)
-        if form.is_valid():
-            form.save()
+        quiz_form = QuizForm(request.POST)
+        quiz_questions_form = QuizQuestionsForm(request.POST)
+        if quiz_form.is_valid() and quiz_questions_form.is_valid():
+            quiz_form.save()
+            quiz_questions_form.save()
             return redirect("home")
     else:
         # If its a get request we get our form
-        form = QuizForm()
+        quiz_form = QuizForm()
+        quiz_questions_form = QuizQuestionsForm()
     # We reutn a rendered bit fo html
-    return render(request, "main/create-quiz.html", {"form": form})
+    return render(
+        request,
+        "main/create-quiz.html",
+        {"quiz_form": quiz_form, "quiz_questions_form": quiz_questions_form},
+    )

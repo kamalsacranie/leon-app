@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "accounts.apps.AccountsConfig",
     "tailwind",
     "theme",
+    "crispy_forms",
 ]
 
 MIDDLEWARE = [

@@ -1,10 +1,9 @@
-{% extends "accounts/authentication_base.html" %}
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
 
-{% block page %}
-    <h1>Create Quiz</h1>
-{% endblock page %}
-
-
-{% block button %}
-    Create Quiz
-{% endblock button %}
+{% block content %}
+<form>
+    {{ quiz_form|crispy }}
+    {{ quiz_questions_form|crispy }}
+</form> 
+{% endblock content %}
