@@ -5,10 +5,10 @@ from django.forms import ModelForm
 class QuizForm(ModelForm):
     class Meta:
         model = Quiz
-        fields = ["quiz_name", "quiz_description", "pub_date", "set_by"]
+        exclude = ["set_by", "pub_date"]
 
 
 class QuizQuestionsForm(ModelForm):
     class Meta:
         model = Questions
-        exclude = []
+        exclude = ["quiz"]

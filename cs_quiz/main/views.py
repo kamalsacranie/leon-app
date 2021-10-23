@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from main.forms import QuizQuestionsForm, QuizForm
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -24,7 +25,12 @@ def create_quiz_view(request):
         quiz_form = QuizForm(request.POST)
         quiz_questions_form = QuizQuestionsForm(request.POST)
         if quiz_form.is_valid() and quiz_questions_form.is_valid():
-            quiz_form.save()
+            quiz = quiz_form.save(commit=False)
+            quiz.set_by = User.objects.get(username=request.user)
+            quiz.save()
+            questions = quiz_questions_form.save(commit=False)
+            questions.quiz = quiz
+            # Sync with the databse to set our quiz FK
             quiz_questions_form.save()
             return redirect("home")
     else:

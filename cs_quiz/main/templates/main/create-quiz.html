@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load tailwind_filters %}
 
 {% block content %}
-<form>
+<form method="post" class="p-10 rounded-3xl bg-gray-200 m-10">{% csrf_token %}
     {{ quiz_form|crispy }}
+    <div class="h-1 my-5 bg-black"></div>
     {{ quiz_questions_form|crispy }}
+    <button class="bg-red-500 rounded-lg p-3 my-3 text-white hover:bg-blue-200 transition duration-500" type="submit">Create Quiz</button>
 </form> 
 {% endblock content %}
