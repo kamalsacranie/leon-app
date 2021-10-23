@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="p-10">{% block page %}{% endblock %}</h1>
+<div class="flex p-10">
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <p class="pt-5">
+            {{ field.label_tag }}<br>
+            {% if field.help_text %}
+                <small class="pl-3">{{ field.help_text }}</small><br>
+            {% endif %}
+            {{ field }}
+            {% for error in field.errors %}
+                <p>i{{ error }}</p>
+            {% endfor %}
+        </p>
+        {% endfor %}
+        <button class="bg-red-500 rounded-lg p-3 my-3 text-white" type="submit">{% block button %}{% endblock %}</button>
+    </form>
+</div>
+{% endblock content %}

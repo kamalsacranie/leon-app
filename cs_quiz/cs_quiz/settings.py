@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "main.apps.MainConfig",
+    "accounts.apps.AccountsConfig",
+    "tailwind",
+    "theme",
 ]
 
 MIDDLEWARE = [
@@ -126,3 +129,12 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Where you get redirected after login
+LOGIN_REDIRECT_URL = "/"
+
+# Necessary for tailwind
+TAILWIND_APP_NAME = "theme"
+INTERNAL_IPS = [
+    "127.0.0.1",
+]

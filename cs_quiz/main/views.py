@@ -1,7 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 
-from .models import Quizes
+
+from .models import Quiz
 
 
 # Create your views here.
@@ -11,5 +12,5 @@ def home(request) -> HttpResponse:
 
 
 def quiz(request) -> HttpResponse:
-    context = {"quizes": Quizes.objects.all()}
+    context = {"quizes": Quiz.objects.all()}
     return render(request, "main/quiz.html", context)
