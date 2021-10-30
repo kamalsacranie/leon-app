@@ -12,7 +12,7 @@ from .models import Questions, Quiz, UserQuizInfo
 def questions_stripper(questions: dict) -> tuple[list, dict]:
     keys = [key for key in questions.keys() if type(questions[key]) is str]
     keys = [
-        key for key in keys if "_" not in key and len(key) < 3 and "q" in key
+        key for key in keys if "_" not in key and len(key) < 4 and "q" in key
     ]
     return keys, {key: questions[key] for key in keys}
 
@@ -34,11 +34,16 @@ def home_view(request) -> HttpResponse:
 
 
 def quiz_view(request, pk) -> HttpResponse:
+    # Getting our quiz that was clicked on by the user by filtering our model
+    # by the quiz pk
     quiz = Quiz.objects.filter(id=pk)[0]
+
+    print(12)
     ui_query = UserQuizInfo.objects.filter(
         quiz_name_id=pk, user_id=request.user.id
     )
     user_info = ui_query[0] if ui_query else None
+    print(user_info)
     try:
         questions = Questions.objects.filter(quiz_id=pk)[0].__dict__
         # Get our question keys in the correct order
@@ -47,6 +52,7 @@ def quiz_view(request, pk) -> HttpResponse:
         random_keys = list(questions.keys())
         # Happens in place for some reason
         random.shuffle(random_keys)
+        # Create new dict for our reordered keys
         final_questions = dict()
         for q_key in q_keys:
             final_questions[q_key] = {
@@ -57,6 +63,7 @@ def quiz_view(request, pk) -> HttpResponse:
                 and len([s for s in q_key if s.isnumeric()])
                 == len([s for s in key[0:3] if s.isnumeric()])
             }
+        print(final_questions)
         answer_order = list()
         for key in final_questions.keys():
             answer_number = [
@@ -65,6 +72,7 @@ def quiz_view(request, pk) -> HttpResponse:
                 if "ans" in e
             ][0] + 1
             answer_order.append(answer_number)
+        print(answer_order)
 
     except IndexError:
         final_questions = None
@@ -73,7 +81,25 @@ def quiz_view(request, pk) -> HttpResponse:
     if request.method == "POST":
         answers_form = AnswersForm(request.POST)
         if answers_form.is_valid():
-            return redirect("profile")
+            answers = answers_form.cleaned_data
+            user_answer_order = [answers[k] for k in answers.keys()]
+            print(user_answer_order)
+            num_correct = len(
+                [
+                    a
+                    for a, b in zip(answer_order, user_answer_order)
+                    if a == int(b)
+                ]
+            )
+            score = num_correct / 10
+            result = UserQuizInfo(
+                quiz_name=quiz,
+                user=request.user,
+                score=score,
+            )
+            result.save()
+            print(user_answer_order)
+            return redirect("home")
     else:
         answers_form = AnswersForm()
 
@@ -84,8 +110,6 @@ def quiz_view(request, pk) -> HttpResponse:
         "questions": final_questions,
         "form": answers_form,
     }
-
-    print(context["form"]["q1"][0])
 
     return render(request, "main/quiz.html", context)
 

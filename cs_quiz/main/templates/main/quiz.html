@@ -8,26 +8,33 @@
 {% if ui.score %}
     <b>You have already completed this quiz</b>
     <div class="p-10 max-w-lg bg-blue-200 rounded-xl mx-auto my-10">
-    {% for k, v in questions.items %}
-        {% if 'question' in k %}
-            <p class="p-2 bg-white rounded-xl mt-6 font-bold">{{ k|upper }}: {{ v }}</p>
-        {% endif %}
-        {% if 'ans' in k %}
-            <p class="p-2 bg-green-300 rounded-xl">{{ k|upper }}: {{ v }}</p> 
-        {% endif %}
+    {% for k, v in q_dict.items %}
+        <p class="p-2 bg-white rounded-xl mt-6 font-bold">{{ k|upper }}: {{ v }}</p>
+        {% for q_numer, q_opts in questions.items %}
+            {% if k == q_number %}
+                {% for opt_key, opt_value in q_opts.items %}
+                    {{ opt_key }}
+                    {% if 'ans' in opt_key %}
+                        <p class="p-2 bg-green-300 rounded-xl">{{ opt_key|upper }}: {{ opt_value }}</p> 
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
     {% endfor %}
     </div>
 {% else %}
+<form method="post">
 <div class="grid grid-cols-3 gap-32">
+    {% csrf_token %}
     {% for field in form %}
-<div class="flex mx-auto space-x-10">
+    <div class="flex mx-auto space-x-10">
         <div>{{ field.name }}</div>
         <div>
             {% for a, b in q_dict.items %}
                 {% if a == field.name %}<div>{{ b }}</div>{% endif %} 
             {% endfor %}
             {% for k, v in questions.items %}
-                {% if field.name in k %}
+                {% if field.name == k %}
                     {% for i, s in v.items %}
                     <div>{{ forloop.counter }}: {{ s }}</div>
                     {% endfor %}
@@ -38,5 +45,9 @@
 </div>
     {% endfor %}
 </div>
+<div class="block">
+    <button class="bg-red-500 rounded-lg p-3 my-3 text-white hover:bg-blue-200 transition duration-500" type="submit">Submit</button>
+</div>
+</form>
 {% endif %}
 {% endblock %}
