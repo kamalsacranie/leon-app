@@ -1,11 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Profile</h1>
-{% for i in assigned_quizes %}
-<p>{{ i.quiz_name }}</p> 
-{% if user.is_superuser %}
-<p>I'm a superuser</p> 
-{% endif %}
+<div class="p-10">
+{% for k, v in user_quizes.items %}
+    {% if v.score %}
+    <div class="py-4">
+        <b>Complete: </b><a class="text-blue-800" href="{% url 'quiz' pk=v.quiz_name_id %}">{{ v.quiz_name }}</a><br />
+    </div>
+    {% else %}
+    <div class="py-4">
+        <b>Incomplete: </b><a class="text-blue-800" href="{% url 'quiz' pk=v.id %}">{{ v.quiz_name }}</a><br />
+    </div>
+    {% endif %}
 {% endfor %}
+</div>
 {% endblock %}

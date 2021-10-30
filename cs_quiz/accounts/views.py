@@ -4,6 +4,8 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
+from main.models import UserQuizInfo
+from main.models import Quiz
 from .forms import SignUpForm
 
 
@@ -43,6 +45,27 @@ def logout_view(request):
 
 
 @login_required
-def profile_view(request) -> HttpResponse:
-    context = {"assigned_quizes": [1, 2]}
+def profile_view(request, pk) -> HttpResponse:
+    # getting our queryset of all quizes
+    quizes = Quiz.objects.all()
+    # Getting our user specific info for all the quizes
+    user_info = UserQuizInfo.objects.filter(user_id=pk)
+    # Tupel of quiz ids
+    user_quiz_ids = (i.quiz_name_id for i in user_info)
+    user_quizes = dict()
+
+    for quiz in quizes:
+        if quiz.id in user_quiz_ids:
+            # if the user has a score for the current quiz in the databese,
+            # then we add that quizinfoobject to our dictionary
+            user_quizes[quiz.quiz_name] = UserQuizInfo.objects.filter(
+                user_id=pk, quiz_name_id=quiz.id
+            )[0]
+        else:
+            user_quizes[quiz.quiz_name] = Quiz.objects.filter(id=quiz.id)[0]
+
+    context = {
+        "user_quizes": user_quizes,
+        "quizes": {quiz.id: quiz for quiz in Quiz.objects.all()},
+    }
     return render(request, "accounts/profile.html", context)

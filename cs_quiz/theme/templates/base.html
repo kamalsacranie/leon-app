@@ -17,7 +17,7 @@
                 {% if user.is_superuser %}
                 <a class="px-5 py-3" href="{% url 'create-quiz' %}">Create Quiz</a>
                 {% endif %}
-            <a class="px-5 py-3" href="{% url 'profile' %}">Profile</a>
+            <a class="px-5 py-3" href="{% url 'profile' pk=user.id %}">Profile</a>
             <a class="px-5 py-3" href="{% url 'logout' %}">Logout</a>
             {% else %}
                 <a class="px-5 py-3" href="{% url 'login' %}">Login</a>
