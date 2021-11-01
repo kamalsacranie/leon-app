@@ -1,11 +1,28 @@
+from datetime import datetime
+from django.forms.widgets import NumberInput
+from django.utils import timezone
 from main.models import Quiz, Questions
 from django import forms
 
 
 class QuizForm(forms.ModelForm):
+    due_date = forms.DateField(widget=NumberInput(attrs={"type": "date"}))
+
     class Meta:
         model = Quiz
-        exclude = ["set_by", "pub_date"]
+        exclude = [
+            "set_by",
+            "pub_date",
+        ]
+
+    # The widget NumberInput already converst our form input to a date and
+    # django expects a string so we have to specify this custom method to
+    # override django's default behaviou
+    def clean_due_date(self):
+        date = self.cleaned_data["due_date"]
+        if date < datetime.date.today():
+            raise forms.ValidationError("The date cannot be in the past!")
+        return date
 
 
 class QuizQuestionsForm(forms.ModelForm):

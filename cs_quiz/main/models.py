@@ -7,7 +7,7 @@ class Quiz(models.Model):
     quiz_name = models.CharField(max_length=100)
     quiz_description = models.TextField(max_length=500)
     pub_date = models.DateTimeField(default=timezone.now)
-    due_date = models.DateTimeField()
+    due_date = models.DateField()
     set_by = models.CharField(max_length=100, null=True)
 
     def __str__(self):

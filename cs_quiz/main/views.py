@@ -1,3 +1,4 @@
+import datetime
 from django.contrib.auth.models import User
 from main.forms import QuizQuestionsForm, QuizForm, AnswersForm
 from django.http import HttpResponse
@@ -37,6 +38,11 @@ def quiz_view(request, pk) -> HttpResponse:
     # Getting our quiz that was clicked on by the user by filtering our model
     # by the quiz pk
     quiz = Quiz.objects.filter(id=pk)[0]
+
+    if quiz.due_date < datetime.date.today():
+        return render(
+            request, "accounts/profile.html", {"alert": "Due date has passed"}
+        )
 
     print(12)
     ui_query = UserQuizInfo.objects.filter(

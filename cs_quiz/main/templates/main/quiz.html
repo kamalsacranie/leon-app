@@ -5,7 +5,7 @@
 {% block content %}
 <h1>Quiz</h1>
 <p>{{ quiz }}</p>
-{% if ui.score %}
+{% if ui.score > 0 %}
     <b>You have already completed this quiz</b>
     <div class="p-10 max-w-lg bg-blue-200 rounded-xl mx-auto my-10">
     {% for k, v in q_dict.items %}
@@ -23,6 +23,7 @@
     {% endfor %}
     </div>
 {% else %}
+{{ quiz.score }}
 <form method="post">
 <div class="grid grid-cols-3 gap-32">
     {% csrf_token %}

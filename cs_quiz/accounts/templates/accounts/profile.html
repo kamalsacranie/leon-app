@@ -10,8 +10,12 @@
     {% else %}
     <div class="py-4">
         <b>Incomplete: </b><a class="text-blue-800" href="{% url 'quiz' pk=v.id %}">{{ v.quiz_name }}</a><br />
+        <b>{{ v.due_date }}</b>
     </div>
     {% endif %}
 {% endfor %}
 </div>
+{% if alert %}
+<h1>Due date has passed</h1>
+{% endif %}
 {% endblock %}
