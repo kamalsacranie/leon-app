@@ -1,4 +1,5 @@
 import datetime
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from main.forms import QuizQuestionsForm, QuizForm, AnswersForm
 from django.http import HttpResponse
@@ -43,13 +44,39 @@ def quiz_view(request, pk) -> HttpResponse:
         return render(
             request, "accounts/profile.html", {"alert": "Due date has passed"}
         )
-
-    print(12)
     ui_query = UserQuizInfo.objects.filter(
         quiz_name_id=pk, user_id=request.user.id
     )
     user_info = ui_query[0] if ui_query else None
-    print(user_info)
+
+    if request.method == "POST":
+        answers_form = AnswersForm(request.POST)
+        if answers_form.is_valid():
+            answers = answers_form.cleaned_data
+            print("answers", answers)
+            user_answer_order = [answers[k] for k in answers.keys()]
+            # print(user_answer_order)
+            answer_order = request.session["answer_order"]
+            print("gotten session answer order", answer_order)
+            num_correct = len(
+                [
+                    a
+                    for a, b in zip(answer_order, user_answer_order)
+                    if a == int(b)
+                ]
+            )
+            score = num_correct / 10
+            print(score)
+            result = UserQuizInfo(
+                quiz_name=quiz,
+                user=request.user,
+                score=score,
+            )
+            result.save()
+            return redirect("home")
+    else:
+        answers_form = AnswersForm()
+
     try:
         questions = Questions.objects.filter(quiz_id=pk)[0].__dict__
         # Get our question keys in the correct order
@@ -69,7 +96,6 @@ def quiz_view(request, pk) -> HttpResponse:
                 and len([s for s in q_key if s.isnumeric()])
                 == len([s for s in key[0:3] if s.isnumeric()])
             }
-        print(final_questions)
         answer_order = list()
         for key in final_questions.keys():
             answer_number = [
@@ -78,36 +104,12 @@ def quiz_view(request, pk) -> HttpResponse:
                 if "ans" in e
             ][0] + 1
             answer_order.append(answer_number)
-        print(answer_order)
+        print("original order", answer_order)
+        request.session["answer_order"] = answer_order
 
     except IndexError:
         final_questions = None
         q_dict = None
-
-    if request.method == "POST":
-        answers_form = AnswersForm(request.POST)
-        if answers_form.is_valid():
-            answers = answers_form.cleaned_data
-            user_answer_order = [answers[k] for k in answers.keys()]
-            print(user_answer_order)
-            num_correct = len(
-                [
-                    a
-                    for a, b in zip(answer_order, user_answer_order)
-                    if a == int(b)
-                ]
-            )
-            score = num_correct / 10
-            result = UserQuizInfo(
-                quiz_name=quiz,
-                user=request.user,
-                score=score,
-            )
-            result.save()
-            print(user_answer_order)
-            return redirect("home")
-    else:
-        answers_form = AnswersForm()
 
     context = {
         "quiz": quiz,
@@ -148,3 +150,35 @@ def create_quiz_view(request):
         "main/create-quiz.html",
         {"quiz_form": quiz_form, "quiz_questions_form": quiz_questions_form},
     )
+
+
+def user_score_view(request):
+    # Ordering our query by the date completed
+    quizes = Quiz.objects.all().order_by("due_date")
+    completed_quizes = UserQuizInfo.objects.filter(
+        user_id=request.user.id
+    ).order_by("-completion_date")
+    complete_quiz_list = [str(quiz.quiz_name) for quiz in completed_quizes]
+    print(complete_quiz_list)
+
+    # imcomp_list = list()
+    # for quiz in quizes:
+    #     if quiz.name not in complete_quiz_list:
+    #         imcomp_list.append(quiz.name)
+
+    incomplete_quizes = [
+        quiz.quiz_name
+        for quiz in quizes
+        if quiz.quiz_name not in complete_quiz_list
+    ]
+
+    context = {
+        "complete_quizes": completed_quizes,
+        "incomplete_quizes": incomplete_quizes,
+    }
+    return render(request, "main/scores.html", context)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def admin_score_view(request):
+    pass

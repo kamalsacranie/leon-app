@@ -1,21 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="p-10">
+<div class="mx-auto pt-5 max-w-lg">
+    <p class="font-bold">Username: {{ user.username }}</p>
+    <span>Want to change your passowrd?: </span><a class="text-blue-800" href="{% url 'password' %}">Change password</a>
+</div>
+<div class="p-10 grid grid-cols-2 md:grid-cols-3 gap-10 max-w-3xl mx-auto">
 {% for k, v in user_quizes.items %}
-    {% if v.score %}
-    <div class="py-4">
-        <b>Complete: </b><a class="text-blue-800" href="{% url 'quiz' pk=v.quiz_name_id %}">{{ v.quiz_name }}</a><br />
+    {% if v.score >= 0 %}
+    <div class="bg-green-400 p-5 rounded-xl shadow-xl">
+        <p><b>Complete</b></p>
+        <a class="text-blue-800" href="{% url 'quiz' pk=v.quiz_name_id %}">{{ v.quiz_name }}</a><br />
+        <p>Completed on {{ v.completion_date }}</p>
     </div>
     {% else %}
-    <div class="py-4">
-        <b>Incomplete: </b><a class="text-blue-800" href="{% url 'quiz' pk=v.id %}">{{ v.quiz_name }}</a><br />
+    <div class="bg-red-400 p-5 rounded-xl shadow-xl">
+        <p><b>Incomplete</b></p>
+        <a class="text-blue-800" href="{% url 'quiz' pk=v.id %}">{{ v.quiz_name }}</a><br />
         <b>{{ v.due_date }}</b>
     </div>
     {% endif %}
 {% endfor %}
 </div>
 {% if alert %}
-<h1>Due date has passed</h1>
+<div class="px-10 pb-10 text-white">
+    <a class="bg-black p-4 rounded-xl" href="{% url 'profile' pk=user.id %}">back</a>
+</div>
+<div class="bg-red-400 mx-auto p-10 text-center rounded-xl max-w-lg">
+    <span class="font-bold">Due date has passed</span>
+</div>
 {% endif %}
 {% endblock %}

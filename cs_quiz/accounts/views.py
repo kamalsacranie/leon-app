@@ -1,12 +1,27 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import (
+    AuthenticationForm,
+    UserCreationForm,
+    PasswordChangeForm,
+)
+from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.urls import reverse_lazy
 
 from main.models import UserQuizInfo
 from main.models import Quiz
 from .forms import SignUpForm
+
+
+class PasswordsChangeView(PasswordChangeView):
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy("password-success")
+
+
+def password_change_success_view(request):
+    return render(request, "accounts/password_change_success.html", {})
 
 
 # If we were to just use usercreationform as a function view
@@ -47,11 +62,11 @@ def logout_view(request):
 @login_required
 def profile_view(request, pk) -> HttpResponse:
     # getting our queryset of all quizes
-    quizes = Quiz.objects.all()
+    quizes = Quiz.objects.all().order_by("-due_date")
     # Getting our user specific info for all the quizes
     user_info = UserQuizInfo.objects.filter(user_id=pk)
     # Tupel of quiz ids
-    user_quiz_ids = (i.quiz_name_id for i in user_info)
+    user_quiz_ids = [i.quiz_name_id for i in user_info]
     user_quizes = dict()
 
     for quiz in quizes:
@@ -64,6 +79,7 @@ def profile_view(request, pk) -> HttpResponse:
         else:
             user_quizes[quiz.quiz_name] = Quiz.objects.filter(id=quiz.id)[0]
 
+    # print("UserQz", user_quizes)
     context = {
         "user_quizes": user_quizes,
         "quizes": {quiz.id: quiz for quiz in Quiz.objects.all()},

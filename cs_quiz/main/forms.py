@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from django.forms.widgets import NumberInput
 from django.utils import timezone
 from main.models import Quiz, Questions

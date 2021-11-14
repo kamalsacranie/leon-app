@@ -88,6 +88,7 @@ class UserQuizInfo(models.Model):
     quiz_name = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     score = models.FloatField()
+    completion_date = models.DateField(default=timezone.now)
 
     class Meta:
         verbose_name = "User Quiz Info"

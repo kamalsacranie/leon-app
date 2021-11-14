@@ -12,10 +12,13 @@
 	<body class="font-sans bg-gray-500 font-sans leading-normal tracking-normal">
         <div id="header" class="flex justify-between bg-blue-800">
             <a class="px-5 py-3" href="{% url 'home' %}">Home</a>
-            <a class="px-5 py-3" href="{% url 'home' %}">Home</a>
             {% if user.is_authenticated %}
                 {% if user.is_superuser %}
                 <a class="px-5 py-3" href="{% url 'create-quiz' %}">Create Quiz</a>
+                <a class="px-5 py-3" href="{% url 'home' %}">Scores</a>
+                {% endif %}
+                {% if not user.is_superuser %}
+                <a class="px-5 py-3" href="{% url 'user-scores' %}">Scores</a>
                 {% endif %}
             <a class="px-5 py-3" href="{% url 'profile' pk=user.id %}">Profile</a>
             <a class="px-5 py-3" href="{% url 'logout' %}">Logout</a>

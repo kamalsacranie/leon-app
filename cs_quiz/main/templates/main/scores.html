@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex space-x-2 items-start">
+    <div id="complete-table" class="grid grid-cols-1 flex-grow pr-5 bg-green-400">
+        <div class="grid grid-cols-2 font-extrabold">
+            <span>Quiz name</span>
+            <span>Score</span>
+        </div>
+        {% for e in complete_quizes %}
+        <div class="grid grid-cols-2 h-32">
+            <span class="border-2 border-black">{{ e.quiz_name }}</span>
+            <span class="border-2 border-black">{{ e.score }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    <div id="complete-table" class="grid grid-cols-1 bg-red-400 flex-grow">
+        <div class="grid grid-cols-2 font-extrabold">
+            <span>Quiz name</span>
+            <span>Score</span>
+        </div>
+        {% for e in incomplete_quizes %}
+        <div class="grid grid-cols-2 bg-red-400 h-32">
+            <span class="border-2 border-black">{{ e }}</span>
+            <span class="border-2 border-black">Incomplete</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}
+
+<!-- Name of the quiz -->
+<!-- score for the quiz -->
+<!-- chrologival -->
+<!-- in a table -->
